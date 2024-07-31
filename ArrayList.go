@@ -8,6 +8,14 @@ type ArrayList[T comparable] struct {
 	val   T
 }
 
+func createArraylist[T comparable](initVal T) *ArrayList[T] {
+	var list = &ArrayList[T]{val: initVal}
+	list.first = list
+	list.last = list
+
+	return list
+}
+
 func (list *ArrayList[T]) add(val T) {
 	if list == nil {
 		list = &ArrayList[T]{val: val}
@@ -55,4 +63,29 @@ func (list *ArrayList[T]) removeAll(val T) {
 	}
 
 	list.next.removeAll(val)
+}
+
+func (list *ArrayList[T]) get(index int) T {
+	if index == 0 {
+		return list.val
+	}
+
+	return list.next.get(index - 1)
+
+}
+
+func (list *ArrayList[T]) size() int {
+	if list == nil {
+		return 0
+	}
+
+	return 1 + list.next.size()
+}
+
+func (list *ArrayList[T]) printList() []T {
+	if list == nil {
+		return []T{}
+	}
+
+	return append([]T{list.val}, list.next.printList()...)
 }
