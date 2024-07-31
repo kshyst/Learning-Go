@@ -2,10 +2,50 @@ package main
 
 import (
 	"fmt"
+	"golang.org/x/exp/constraints"
 	"math"
 )
 
-var text string = "hi"
+type comparable interface {
+	constraints.Ordered
+}
+
+type List[T comparable] struct {
+	prev *List[T]
+	next *List[T]
+	val  T
+}
+
+func (list *List[T]) printList() string {
+	var result string
+	for list != nil {
+		result += fmt.Sprintf("%v -> ", list.val)
+		list = list.next
+	}
+	return result
+}
+
+func (list *List[T]) delete(val T) bool {
+
+	if list == nil {
+		return false
+	}
+
+	if list.val == val {
+		if list.prev != nil {
+			list.prev.next = list.next
+		}
+
+		if list.next != nil {
+			list.next.prev = list.prev
+		}
+
+		return true
+	}
+
+	return list.next.delete(val)
+
+}
 
 func main() {
 	testingVars()
@@ -14,6 +54,8 @@ func main() {
 	loops()
 	structs()
 	maps()
+	useList()
+
 }
 
 func testingVars() {
@@ -192,4 +234,31 @@ func maps() {
 
 	fmt.Println(m3)
 
+}
+
+func useList() {
+
+	var list1 = List[int]{val: 1}
+	var list2 = List[int]{val: 2}
+	var list3 = List[int]{val: 3}
+
+	list1.next = &list2
+	list2.prev = &list1
+
+	list2.next = &list3
+	list3.prev = &list2
+
+	fmt.Println(list1)
+	fmt.Println(list2)
+	fmt.Println(list3)
+
+	fmt.Println(list1.printList())
+	fmt.Println(list2.printList())
+	fmt.Println(list3.printList())
+
+	list1.delete(2)
+
+	fmt.Println(list1.printList())
+	fmt.Println(list2.printList())
+	fmt.Println(list3.printList())
 }
