@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "1323:1323"
+    volumes:
+      - .:/app
+    environment:
+      - GO_ENV=development
+    command: go run server.go

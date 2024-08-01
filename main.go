@@ -13,7 +13,7 @@ func main() {
 	structs()
 	maps()
 	useArrayList()
-
+	fmt.Println(multipleOutput(5))
 }
 
 func testingVars() {
@@ -210,4 +210,8 @@ func useArrayList() {
 	list.add(3)
 	list.removeAll(3)
 	fmt.Println(list.printList())
+}
+
+func multipleOutput(x int8) (int8, int8) {
+	return x, x + 1
 }
