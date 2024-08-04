@@ -26,4 +26,3 @@ COPY --from=builder /app/main .
 
 # Expose port 8080 to the outside world
 EXPOSE 1323
-

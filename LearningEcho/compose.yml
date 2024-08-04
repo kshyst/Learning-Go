@@ -10,3 +10,4 @@ services:
     environment:
       - GO_ENV=development
     command: go run server.go
+

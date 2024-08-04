@@ -14,6 +14,7 @@ func main() {
 	maps()
 	useArrayList()
 	fmt.Println(multipleOutput(5))
+	pointers()
 }
 
 func testingVars() {
@@ -214,4 +215,16 @@ func useArrayList() {
 
 func multipleOutput(x int8) (int8, int8) {
 	return x, x + 1
+}
+
+func pointers() {
+	var a int = 10
+	var b *int = &a
+	var pointer *int8 = new(int8)
+
+	*pointer = 3
+
+	fmt.Println(a, b, *b)
+	fmt.Println(&b)
+	fmt.Println(&b)
 }
