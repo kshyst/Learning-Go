@@ -13,8 +13,15 @@ func main() {
 	structs()
 	maps()
 	useArrayList()
-	fmt.Println(multipleOutput(5))
 	pointers()
+	fmt.Println(multipleOutput(5))
+	fmt.Println(variadics(1, 3, 5, 6))
+
+	myClosure := closure("bye")
+	fmt.Println(myClosure(" nigger1"))
+	fmt.Println(myClosure(" nigger2"))
+	fmt.Println(myClosure(" nigger3"))
+	fmt.Println(myClosure(" nigger4"))
 }
 
 func testingVars() {
@@ -227,4 +234,22 @@ func pointers() {
 	fmt.Println(a, b, *b)
 	fmt.Println(&b)
 	fmt.Println(&b)
+	fmt.Println(*(&a))
+}
+
+func variadics(num ...int32) int32 {
+	var total int32 = 0
+	for _, x := range num {
+		total += x
+	}
+	return total
+}
+
+func closure(initialVal string) func(added string) string {
+	str := initialVal
+
+	return func(added string) string {
+		str += added
+		return str
+	}
 }
