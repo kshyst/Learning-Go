@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"unicode/utf8"
 )
 
 func main() {
@@ -22,6 +23,8 @@ func main() {
 	fmt.Println(myClosure(" nigger2"))
 	fmt.Println(myClosure(" nigger3"))
 	fmt.Println(myClosure(" nigger4"))
+
+	unicode()
 }
 
 func testingVars() {
@@ -150,6 +153,23 @@ func structs() {
 		salary int
 	}
 
+	type container struct {
+		Person
+		sex string
+	}
+
+	var c1 = container{
+		Person: Person{
+			name:   "ben",
+			age:    10,
+			job:    "super hero",
+			salary: 0,
+		},
+		sex: "male",
+	}
+
+	fmt.Println(c1.name + "'s sex is " + c1.sex)
+
 	var p1 Person
 	p1.name = "John"
 	p1.age = 25
@@ -252,4 +272,10 @@ func closure(initialVal string) func(added string) string {
 		str += added
 		return str
 	}
+}
+
+func unicode() {
+	str := "Hello"
+
+	fmt.Println(utf8.RuneCountInString(str))
 }

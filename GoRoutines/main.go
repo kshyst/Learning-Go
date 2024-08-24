@@ -2,51 +2,99 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
-	"sync"
 	"time"
 )
 
-var dbData = []int{1, 2, 3, 4, 5}
-var wg = sync.WaitGroup{}
-
-// var m = sync.Mutex{}
-var m = sync.RWMutex{}
-var results = []string{}
-
 func main() {
+	var messages = make(chan string)
 
-	t0 := time.Now()
-	for i := 0; i < 1000; i++ {
-		wg.Add(1)
-		go dbCall(i)
+	go func(message string) {
+		for i := 0; i < 3; i++ {
+			println(message+" ", i)
+			messages <- message
+		}
+	}("first goroutine")
+
+	fmt.Println("doneee")
+
+	go func(message string) {
+		for i := 0; i < 3; i++ {
+			println(message+" ", i)
+		}
+	}("second goroutine")
+
+	msg := <-messages
+	fmt.Println(msg)
+	time.Sleep(time.Second)
+	fmt.Println("done")
+
+	fmt.Println("----------------")
+
+	pings := make(chan string, 1)
+	pongs := make(chan string, 1)
+	ping(pings, "passed message")
+	pong(pings, pongs)
+	fmt.Println(<-pongs)
+
+	fmt.Println("----------------")
+
+	c1 := make(chan string)
+	c2 := make(chan string)
+
+	go func() {
+		time.Sleep(1 * time.Second)
+		c1 <- "one"
+	}()
+	go func() {
+		time.Sleep(2 * time.Second)
+		c2 <- "two"
+	}()
+
+	for i := 0; i < 2; i++ {
+		select {
+		case msg2 := <-c2:
+			fmt.Println("received", msg2)
+		case msg1 := <-c1:
+			fmt.Println("received", msg1)
+		}
 	}
-	wg.Wait()
-	fmt.Println("Time taken: ", time.Since(t0))
 
-	fmt.Println("Results: ", results)
+	fmt.Println("----------------")
+
+	//timeout implementation
+
+	chan1 := make(chan string, 1)
+	go func() {
+		time.Sleep(2 * time.Second)
+		chan1 <- "result 1"
+	}()
+
+	select {
+	case res := <-chan1:
+		fmt.Println(res)
+	case <-time.After(1 * time.Second):
+		fmt.Println("timeout 1")
+	}
+
+	chan2 := make(chan string, 1)
+	go func() {
+		time.Sleep(2 * time.Second)
+		chan2 <- "result 2"
+	}()
+
+	select {
+	case res := <-chan2:
+		fmt.Println(res)
+	case <-time.After(3 * time.Second):
+		fmt.Println("timeout 2")
+	}
 }
 
-func dbCall(i int) {
-	var delay float32 = rand.Float32() * 1000
-
-	time.Sleep(time.Duration(delay) * time.Millisecond)
-
-	fmt.Println("DB Call ", i)
-
-	save(fmt.Sprintf("DB Call %d", i))
-	log()
-	wg.Done()
+func ping(pings chan<- string, msg string) {
+	pings <- msg
 }
 
-func save(result string) {
-	m.Lock()
-	results = append(results, result)
-	m.Unlock()
-}
-
-func log() {
-	m.RLock()
-	fmt.Println("current Results: ", results)
-	m.RUnlock()
+func pong(pings <-chan string, pongs chan<- string) {
+	msg := <-pings
+	pongs <- msg
 }
